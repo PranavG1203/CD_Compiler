@@ -1,0 +1,3 @@
+numero a;
+a = 10;
+imprimir a;

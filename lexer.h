@@ -1,12 +1,12 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include <stdio.h>
+#include "tokens.h" // Include tokens.h for Token type
 
-// Function declarations
-void lexer_init(FILE *source_file);          // Initialize lexer with source file
-int next_token();                            // Get next token
-const char* lexer_get_identifier();          // Get the identifier token value
-const char* lexer_get_number();              // Get the number token value
+void lexer_init(FILE *source_file);
+Token next_token();
+
+// Declare current_token as extern so it can be accessed from parser.c
+extern Token current_token;
 
 #endif
