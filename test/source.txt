@@ -1,7 +1,0 @@
-numero a;
-a = 10;
-imprimir a;
-si a > 5
-    imprimir a;
-sino
-    imprimir "a es menor o igual a 5";

@@ -1,28 +1,28 @@
 #include <stdio.h>
-#include "parser.h"
 #include "lexer.h"
+#include "parser.h"
 
 void parse_program() {
-    lexer_init(stdin); // Initialize lexer with input from stdin
-    current_token = next_token(); // Get the first token
+    token_type current_token = next_token();
 
     while (current_token != TOKEN_EOF) {
-        parse_statement(); // Parse statements
-        current_token = next_token(); // Get the next token
-    }
-}
-
-void parse_statement() {
-    switch (current_token) {
-        case TOKEN_SI:
-            // Handle 'si' (if statement)
-            break;
-        case TOKEN_IMPRIMIR:
-            // Handle 'imprimir' (print statement)
-            break;
-        // Add more cases as needed
-        default:
-            printf("Unexpected token: %d\n", current_token);
-            break;
+        switch (current_token) {
+            case TOKEN_IDENTIFIER:
+                printf("Identifier detected.\n");
+                break;
+            case TOKEN_NUMBER:
+                printf("Number detected.\n");
+                break;
+            case TOKEN_ASSIGNMENT:
+                printf("Assignment operator detected.\n");
+                break;
+            case TOKEN_SEMICOLON:
+                printf("Semicolon detected.\n");
+                break;
+            default:
+                printf("Unknown token encountered.\n");
+                break;
+        }
+        current_token = next_token();
     }
 }

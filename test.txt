@@ -1,0 +1,3 @@
+imprimir a;
+si a = 5;
+sino;

@@ -1,13 +1,14 @@
-CC=gcc
-CFLAGS=-Wall
+CC = gcc
+CFLAGS = -Wall
+OBJ = compiler.o lexer.o parser.o
 
 all: compiler.exe
 
-compiler.exe: compiler.o lexer.o parser.o
-	$(CC) -o $@ $^
+compiler.exe: $(OBJ)
+	$(CC) $(CFLAGS) -o compiler.exe $(OBJ)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	del *.o compiler.exe
+	rm -f *.o compiler.exe

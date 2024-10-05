@@ -1,12 +1,16 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include "tokens.h" // Include tokens.h for Token type
+typedef enum {
+    TOKEN_IDENTIFIER,
+    TOKEN_NUMBER,
+    TOKEN_ASSIGNMENT,
+    TOKEN_SEMICOLON,
+    TOKEN_EOF,
+    TOKEN_UNKNOWN
+} token_type;
 
-void lexer_init(FILE *source_file);
-Token next_token();
-
-// Declare current_token as extern so it can be accessed from parser.c
-extern Token current_token;
+void init_lexer(FILE *input_file);
+token_type next_token();
 
 #endif

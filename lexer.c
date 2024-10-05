@@ -1,58 +1,83 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include "lexer.h"
-#include "tokens.h"
 
-static char buffer[256];
-static int position = 0;
+char current_char;
+FILE *source;
 
-// Define current_token here
-Token current_token;
-
-void lexer_init(FILE *source_file) {
-    // Initialize lexer state if needed
-    fgets(buffer, sizeof(buffer), source_file); // Load first line of the source file
+void init_lexer(FILE *input_file) {
+    source = input_file;
+    current_char = getc(source);
 }
 
-Token next_token() {
-    while (1) {
-        if (position >= strlen(buffer)) {
-            return TOKEN_EOF; // End of file
-        }
+void advance() {
+    current_char = getc(source);
+}
 
-        char c = buffer[position++];
-        if (isspace(c)) {
-            continue;
-        }
+// Helper function to check if the current character is part of an identifier
+int is_identifier_char(char c) {
+    return isalpha(c) || c == '_';
+}
 
-        if (isdigit(c)) {
-            ungetc(c, stdin);
-            return TOKEN_NUMBER;
-        }
-
-        if (isalpha(c)) {
-            ungetc(c, stdin);
-            char id[256];
-            fscanf(stdin, "%s", id);
-            if (strcmp(id, "si") == 0) return TOKEN_SI;
-            if (strcmp(id, "sino") == 0) return TOKEN_SINO;
-            if (strcmp(id, "imprimir") == 0) return TOKEN_IMPRIMIR;
-            if (strcmp(id, "numero") == 0) return TOKEN_NUMERO;
-            return TOKEN_IDENTIFIER;
-        }
-
-        switch (c) {
-            case '=': return TOKEN_ASSIGN;
-            case ';': return TOKEN_SEMICOLON;
-            case '+': return TOKEN_PLUS;
-            case '-': return TOKEN_MINUS;
-            case '(': return TOKEN_LPAREN;
-            case ')': return TOKEN_RPAREN;
-            default:
-                printf("Unknown character: %c\n", c);
-                return TOKEN_UNKNOWN;
-        }
+token_type next_token() {
+    // Skip whitespace
+    while (isspace(current_char)) {
+        advance();
     }
+
+    // Handle EOF
+    if (current_char == EOF) {
+        return TOKEN_EOF;
+    }
+
+    // Handle identifiers (e.g., 'imprimir', 'si', etc.)
+    if (is_identifier_char(current_char)) {
+        // Read the entire identifier
+        char identifier[100];  // Buffer for the identifier (size can be adjusted)
+        int i = 0;
+
+        while (is_identifier_char(current_char)) {
+            identifier[i++] = current_char;
+            advance();
+        }
+        identifier[i] = '\0';  // Null-terminate the string
+
+        // Print out the identifier for debugging
+        printf("Identifier found: %s\n", identifier);
+
+        return TOKEN_IDENTIFIER;
+    }
+
+    // Handle numbers
+    if (isdigit(current_char)) {
+        // Read the entire number
+        char number[100];
+        int i = 0;
+
+        while (isdigit(current_char)) {
+            number[i++] = current_char;
+            advance();
+        }
+        number[i] = '\0';  // Null-terminate the number string
+
+        printf("Number found: %s\n", number);
+
+        return TOKEN_NUMBER;
+    }
+
+    // Handle assignment '='
+    if (current_char == '=') {
+        advance();
+        return TOKEN_ASSIGNMENT;
+    }
+
+    // Handle semicolon ';'
+    if (current_char == ';') {
+        advance();
+        return TOKEN_SEMICOLON;
+    }
+
+    // Unknown token (advance and return unknown)
+    advance();
+    return TOKEN_UNKNOWN;
 }
