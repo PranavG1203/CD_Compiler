@@ -1,3 +1,9 @@
-imprimir a;
-si a = 5;
-sino;
+numero x;
+x = 1;
+
+si (x > 5) {
+    imprimir x;
+} sino {
+    imprimir x;
+    imprimir "hello";
+}

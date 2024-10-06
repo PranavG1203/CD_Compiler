@@ -1,11 +1,10 @@
 CC = gcc
 CFLAGS = -Wall
-OBJ = compiler.o lexer.o parser.o
 
 all: compiler.exe
 
-compiler.exe: $(OBJ)
-	$(CC) $(CFLAGS) -o compiler.exe $(OBJ)
+compiler.exe: compiler.o lexer.o parser.o variable.o
+	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
