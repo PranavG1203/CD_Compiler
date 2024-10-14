@@ -1,9 +1,11 @@
 numero x;
-x = 1;
+x = 10;
+
+numero y;
+y = 15
 
 si (x > 5) {
-    imprimir x;
+    imprimir y;
 } sino {
     imprimir x;
-    imprimir "hello";
 }

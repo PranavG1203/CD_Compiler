@@ -22,79 +22,81 @@ void parse_program() {
 void parse_statement() {
     if (current_token == TOKEN_KEYWORD) {
         if (strcmp(current_token_identifier, "numero") == 0) {
-            // Variable declaration
-            current_token = next_token(); // Move to next token
+            current_token = next_token();
             if (current_token == TOKEN_IDENTIFIER) {
-                printf("Parsed variable declaration: %s\n", current_token_identifier);
-                store_variable(current_token_identifier, 0); // Store variable with initial value 0
-                current_token = next_token(); // Move to next token
+                char var_name[100];
+                strcpy(var_name, current_token_identifier);
+                current_token = next_token();
                 if (current_token == TOKEN_ASSIGN) {
-                    current_token = next_token(); // Move to next token
+                    current_token = next_token();
                     if (current_token == TOKEN_NUMBER) {
-                        printf("Assigned value to variable: %s = %d\n", current_token_identifier, current_token_value);
-                        store_variable(current_token_identifier, current_token_value);
-                        current_token = next_token(); // Move to next token
+                        store_variable(var_name, current_token_value);
+                        printf("Assigned variable %s = %d\n", var_name, current_token_value);
+                        current_token = next_token();
                     }
                 }
             }
         } else if (strcmp(current_token_identifier, "imprimir") == 0) {
-            // Print statement
-            current_token = next_token(); // Move to next token
+            current_token = next_token();
             if (current_token == TOKEN_IDENTIFIER) {
-                printf("Print variable: %s\n", current_token_identifier);
-                current_token = next_token(); // Move to next token
+                int value = get_variable(current_token_identifier);
+                printf("Print variable %s = %d\n", current_token_identifier, value);
+                current_token = next_token();
             }
         } else if (strcmp(current_token_identifier, "si") == 0) {
-            // If statement
             parse_if_statement();
         }
     } else if (current_token == TOKEN_IDENTIFIER) {
-        // Assignment statement
         char var_name[100];
         strcpy(var_name, current_token_identifier);
-        current_token = next_token(); // Move to next token
+        current_token = next_token();
         if (current_token == TOKEN_ASSIGN) {
-            current_token = next_token(); // Move to next token
+            current_token = next_token();
             if (current_token == TOKEN_NUMBER) {
-                printf("%d\n", current_token_value);
                 store_variable(var_name, current_token_value);
-                current_token = next_token(); // Move to next token
+                printf("Updated variable %s = %d\n", var_name, current_token_value);
+                current_token = next_token();
             }
         }
     } else {
-        // If current token does not match any expected, consume and report error
         current_token = next_token();
     }
 }
 
 void parse_if_statement() {
-    current_token = next_token(); // Move to next token
+    current_token = next_token();
     if (current_token == TOKEN_LPAREN) {
-        current_token = next_token(); // Move to next token
-        parse_expression(); // Parse the expression for the condition
+        current_token = next_token();
+        parse_expression();
         if (current_token == TOKEN_RPAREN) {
-            current_token = next_token(); // Move to next token
+            current_token = next_token();
             if (current_token == TOKEN_LBRACE) {
-                // Execute the statements within the braces
-                current_token = next_token(); // Move to next token
+                current_token = next_token();
                 while (current_token != TOKEN_RBRACE && current_token != TOKEN_EOF) {
-                    parse_statement(); // Parse statements inside the if block
+                    parse_statement();
                 }
-                current_token = next_token(); // Move past the closing brace
+                current_token = next_token();
+            }
+            if (current_token == TOKEN_ELSE) {
+                current_token = next_token();
+                if (current_token == TOKEN_LBRACE) {
+                    current_token = next_token();
+                    while (current_token != TOKEN_RBRACE && current_token != TOKEN_EOF) {
+                        parse_statement();
+                    }
+                    current_token = next_token();
+                }
             }
         }
     }
 }
 
 void parse_expression() {
-    // Simple expression parser (for now just checks for variable and comparisons)
     if (current_token == TOKEN_IDENTIFIER) {
-        // Here, you could add more logic for checking the comparison
         current_token = next_token();
         if (current_token == TOKEN_GREATER) {
-            current_token = next_token(); // Move to next token
+            current_token = next_token();
             if (current_token == TOKEN_IDENTIFIER || current_token == TOKEN_NUMBER) {
-                // Check the second identifier or number
                 current_token = next_token();
             }
         }

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <string.h> // Include for strcmp and strcpy
+#include <string.h>
 #include "lexer.h"
 
 FILE *input_file; 
@@ -26,63 +26,55 @@ int next_token() {
     }
 
     if (isalpha(current_char)) {
-        // Handle identifiers or keywords
         int i = 0;
         while (isalnum(current_char)) {
             current_token_identifier[i++] = current_char;
             current_char = fgetc(input_file);
         }
-        current_token_identifier[i] = '\0'; // Null-terminate the string
-        
-        // Handle keywords like 'numero', 'si', and 'sino'
+        current_token_identifier[i] = '\0';
+
         if (strcmp(current_token_identifier, "numero") == 0) {
-            return TOKEN_KEYWORD; // Example for 'numero'
+            current_token = TOKEN_KEYWORD;
         } else if (strcmp(current_token_identifier, "si") == 0) {
-            return TOKEN_IF; // If token
+            current_token = TOKEN_IF;
         } else if (strcmp(current_token_identifier, "sino") == 0) {
-            return TOKEN_ELSE; // Else token
+            current_token = TOKEN_ELSE;
+        } else if (strcmp(current_token_identifier, "imprimir") == 0) {
+            current_token = TOKEN_KEYWORD;
         } else {
-            return TOKEN_IDENTIFIER; // Regular identifier
+            current_token = TOKEN_IDENTIFIER;
         }
+
+        printf("Token: %d, Identifier: %s\n", current_token, current_token_identifier);
+        return current_token;
     }
 
     if (isdigit(current_char)) {
-        // Handle numbers
-        current_token_value = 0; // Reset value
+        current_token_value = 0;
         while (isdigit(current_char)) {
-            current_token_value = current_token_value * 10 + (current_char - '0'); // Build the integer value
+            current_token_value = current_token_value * 10 + (current_char - '0');
             current_char = fgetc(input_file);
         }
-        return TOKEN_NUMBER;
+        current_token = TOKEN_NUMBER;
+        printf("Token: %d, Value: %d\n", current_token, current_token_value);
+        return current_token;
     }
 
-    // Handle other tokens (assignment, semicolon, etc.)
     switch (current_char) {
-        case '=':
-            current_char = fgetc(input_file);
-            return TOKEN_ASSIGN;
-        case ';':
-            current_char = fgetc(input_file);
-            return TOKEN_SEMICOLON;
-        case '{':
-            current_char = fgetc(input_file);
-            return TOKEN_LBRACE;
-        case '}':
-            current_char = fgetc(input_file);
-            return TOKEN_RBRACE;
-        case '(':
-            current_char = fgetc(input_file);
-            return TOKEN_LPAREN;
-        case ')':
-            current_char = fgetc(input_file);
-            return TOKEN_RPAREN;
-        case '>':
-            current_char = fgetc(input_file);
-            return TOKEN_GREATER; // Add this token for '>'
-        case EOF:
-            return TOKEN_EOF;
+        case '=': current_token = TOKEN_ASSIGN; break;
+        case ';': current_token = TOKEN_SEMICOLON; break;
+        case '{': current_token = TOKEN_LBRACE; break;
+        case '}': current_token = TOKEN_RBRACE; break;
+        case '(': current_token = TOKEN_LPAREN; break;
+        case ')': current_token = TOKEN_RPAREN; break;
+        case '>': current_token = TOKEN_GREATER; break;
+        case EOF: current_token = TOKEN_EOF; break;
         default:
             printf("Error: Unknown character: %c\n", current_char);
             exit(EXIT_FAILURE);
     }
+
+    printf("Token: %d, Char: %c\n", current_token, current_char);
+    current_char = fgetc(input_file); // Advance to next character
+    return current_token;
 }
